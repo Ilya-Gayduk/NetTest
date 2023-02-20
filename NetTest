@@ -1,0 +1,50 @@
+#!/bin/bash
+
+
+OPTION=$(dialog --title "NetTest v0.01" --menu "Выберитие действие:" 15 60 4 \
+"1" "Проверка пинга" \
+"2" "Трассировка" \
+"3" "Проверка DNS-записей"  \
+"4" "Полная проверка" \
+"5" "Информация о подключении" 3>&1 1>&2 2>&3)
+
+
+
+
+case $OPTION in
+	1)
+	user_input=$(dialog --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-) #Окно ввода адреса и помещение его в переменную
+	clear #очистка экрана. Да, костыль, пока не разберусь в перенаправлением вывода в мсбокс
+	ping $user_input # пинг введенного адреса 
+	;;
+
+	2)
+	user_input=$(dialog --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-)
+	clear
+        traceroute $user_input
+	;;
+
+	3)
+	DNS_RECORD=$(dialog --title "Выберитие запись:" --radiolist "хуй" 15 60 19 \
+	"А" "" off \ #dig +short -tA example.com
+	"АААA" "" off \ #dig +short -tAAAA example.com
+	"MX" "" off \ #dig +short -tMX example.com
+	"PTR" "" off \ #dig +short -tPTR example.com
+	"TXT" "" off \ #dig +short -tTXT example.com
+	"SOA" "" off \ #dig +short -tSOA example.com
+	"NS" "" off \ #dig +short -tNS example.com
+	"CNAME" "" off \ #dig +short -tCNAME example.com
+	"CAA" "" off \ # dig +short -tCAA example.com
+	"SRV" "" off \ #dig +short -tCAA example.com
+	3>&1 1>&2 2>&3)
+
+	;;
+
+	4)
+	;;
+
+	5)
+	;;
+esac
+
+
