@@ -58,6 +58,10 @@ case $OPTION in
 	;;
 
 	5)
+	CONF_OPTION=$(dialog --title "Информация о подключении" --menu "Выберитие действие:" 15 60 4 \
+	"1" "Конфигурация подключения" \
+	"2" "Network_Manager-tui"  3>&1 1>&2 2>&3)
+
 	;;
 esac
 
