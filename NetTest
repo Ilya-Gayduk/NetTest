@@ -1,12 +1,27 @@
 #!/bin/bash
-
-
+#
+# Блок меню
+#
+#  0    - нажата клавиша OK
+#  1    - нажата клавиша CANCEL
+#  2    - нажата клавиша HELP
+#  3    - нажата клавиша EXTRA
+#  255  - нажата клавиша ESC
+#
 OPTION=$(dialog --title "NetTest v0.01" --menu "Выберитие действие:" 15 60 4 \
 "1" "Проверка пинга" \
 "2" "Трассировка" \
 "3" "Проверка DNS-записей"  \
 "4" "Полная проверка" \
 "5" "Информация о подключении" 3>&1 1>&2 2>&3)
+
+exitstatus=$?
+if [ $exitstatus = 1 ]; then
+	clear
+	echo "Выход"
+else
+    echo ""
+fi
 
 case $OPTION in
 	1)
@@ -16,10 +31,11 @@ case $OPTION in
 	{
                 for ((i = 0 ; i <= 100 ; i+=50)); do
                 sleep 1
-                echo $i
+                echo $1
                 done
         } | dialog --title "$user_ping"  --gauge "Ожидайте сбора данных..." 6 60 0 #окно ожидания
 	dialog --title "$user_ping"  --msgbox "$ping_inp" 40 70 # Вывод команды в окне
+	bash NetTest #Возврат в основной скрипт
 	;;
 
 	2)
@@ -31,9 +47,9 @@ case $OPTION in
         	sleep 1
         	echo $i
     		done
-	} | whiptail --title "$user_tr" --gauge "Ожидайте сбора данных" 6 60 0
+	} | dialog --title "$user_tr" --gauge "Ожидайте сбора данных" 6 60 0
 	dialog --title "$user_tr"  --msgbox "$tr_inp" 40 70
-
+	bash NetTest
 	;;
 
 	3)
@@ -60,8 +76,20 @@ case $OPTION in
 	5)
 	CONF_OPTION=$(dialog --title "Информация о подключении" --menu "Выберитие действие:" 15 60 4 \
 	"1" "Конфигурация подключения" \
-	"2" "Network_Manager-tui"  3>&1 1>&2 2>&3)
-
+	"2" "Внешний ip" \
+	"3" "Network_Manager-tui"  3>&1 1>&2 2>&3)
+		case $CONF_OPTION in
+			1)
+			;;
+			2)
+			ip_out=$(curl curlmyip.ru 2>&1 | egrep "([0-9]{1,3}\.){3}" )
+			dialog --title "Внешний ip-адрес"  --msgbox "$ip_out" 15 30
+			bash NetTest
+			;;
+			3)
+			nmtui
+			;;
+		esac
 	;;
 esac
 
