@@ -13,29 +13,37 @@ OPTION=$(dialog --title "NetTest v0.01" --menu "Выберитие действ�
 
 case $OPTION in
 	1)
-	user_input=$(dialog --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-) #Окно ввода адреса и помещение его в переменную
+	user_ping=$(dialog --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-) #Окно ввода адреса и помещение его в переменную
 	clear #очистка экрана. Да, костыль, пока не разберусь в перенаправлением вывода в мсбокс
-	ping $user_input # пинг введенного адреса 
+	ping_inp=$(ping $user_pin &)
+
+	dialog --msgbox "$ping_inp" 50 100
 	;;
 
 	2)
 	user_input=$(dialog --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-)
-	clear
-        traceroute $user_input
+        tr_inp=$( traceroute $user_input & ) &&	 {
+		for ((i = 0 ; i <= 100 ; i+=3)); do
+        	sleep 1
+        	echo $i
+    		done
+	} | whiptail --gauge "Please wait while installing" 6 60 0
+	dialog --msgbox "$tr_inp" 40 70
+
 	;;
 
 	3)
-	DNS_RECORD=$(dialog --title "Выберитие запись:" --radiolist "хуй" 15 60 19 \
-	"А" "" off \ #dig +short -tA example.com
-	"АААA" "" off \ #dig +short -tAAAA example.com
-	"MX" "" off \ #dig +short -tMX example.com
-	"PTR" "" off \ #dig +short -tPTR example.com
-	"TXT" "" off \ #dig +short -tTXT example.com
-	"SOA" "" off \ #dig +short -tSOA example.com
-	"NS" "" off \ #dig +short -tNS example.com
-	"CNAME" "" off \ #dig +short -tCNAME example.com
-	"CAA" "" off \ # dig +short -tCAA example.com
-	"SRV" "" off \ #dig +short -tCAA example.com
+	DNS_RECORD=$(dialog --title "ooo" --checklist "Выберитие запись:" 20 60 10 
+	"А" "" off  #dig +short -tA example.com
+	"АААA" "" off  #dig +short -tAAAA example.com
+	"MX" "" off  #dig +short -tMX example.com
+	"PTR" "" off  #dig +short -tPTR example.com
+	"TXT" "" off  #dig +short -tTXT example.com
+	"SOA" "" off  #dig +short -tSOA example.com
+	"NS" "" off  #dig +short -tNS example.com
+	"CNAME" "" off  #dig +short -tCNAME example.com
+	"CAA" "" off  # dig +short -tCAA example.com
+	"SRV" "" off  #dig +short -tCAA example.com
 	3>&1 1>&2 2>&3)
 
 	;;
