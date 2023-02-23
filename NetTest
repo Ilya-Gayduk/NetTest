@@ -23,13 +23,18 @@ exit=$?
 if [ $exit = 1 ]; then
 	dialog --title "Выход"  --msgbox "Всего доброго!" 10 40 #окно при выходе из скрипта
 	clear #очистка экрана консоли
-else
-    echo ""
+	exit
 fi
 
 case $OPTION in
 	1)
 	user_ping=$(dialog --title "Проверка пинга"  --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-) #Окно ввода адреса и помещение его в переменную
+	#ping_exit=$?
+	#if [ $ping_exit = 1 ]; then
+        #	bash NetTest
+	#fi
+
+
 	value_ping=$(dialog --title "Проверка пинга"  --inputbox "Укажите количество хопов:" 8 40 3>&1 1>&2 2>&3 3>&-) #Окно ввода адреса и помещение его в переменную
 	ping_inp=$(ping -c $value_ping $user_ping &) #помещение вывода программы в переменную
 	{
@@ -57,19 +62,21 @@ case $OPTION in
 	;;
 
 	3)
-	DNS_RECORD=$(dialog --title "ooo" --checklist "Выберитие запись:" 20 60 10 
-	"А" "" off  #dig +short -tA example.com
-	"АААA" "" off  #dig +short -tAAAA example.com
-	"MX" "" off  #dig +short -tMX example.com
-	"PTR" "" off  #dig +short -tPTR example.com
-	"TXT" "" off  #dig +short -tTXT example.com
-	"SOA" "" off  #dig +short -tSOA example.com
-	"NS" "" off  #dig +short -tNS example.com
-	"CNAME" "" off  #dig +short -tCNAME example.com
-	"CAA" "" off  # dig +short -tCAA example.com
-	"SRV" "" off  #dig +short -tCAA example.com
-	3>&1 1>&2 2>&3)
-
+	DNS_RECORD=$(dialog  --checklist "Выберитие запись:" 20 60 10 \
+	"А" "A" off \
+	"АААA" "AAA" off \
+	"MX" "MX" off \
+	"PTR" "PTR" off \
+	"TXT" "TXT" off \
+	"SOA" "SOA" off \
+	"NS" "NS" off \
+	"CNAME" "CNAME" off \
+	"CAA" "CAA" off \
+	"SRV" "SRV" off 3>&1 1>&2 2>&3)
+	
+	echo "$DNS_RECORD"
+	
+	#dialog --title   --msgbox  40 70
 	;;
 
 	4)
@@ -103,6 +110,14 @@ case $OPTION in
 			nmtui
 			;;
 		esac
+	;;
+
+	6)
+	DOP_OPTION=$(dialog --title "ДОполнительная информация" --menu "Выберитие действие:" 15 60 4 \
+        "1" "Версия" \
+        "2" "Информация" \
+        "3" "Печеньки"  3>&1 1>&2 2>&3)
+
 	;;
 esac
 
