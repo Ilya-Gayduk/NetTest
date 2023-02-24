@@ -62,6 +62,7 @@ case $OPTION in
 	;;
 
 	3)
+	USER_DNS=$(dialog --title "Проверка ДНС-записей" --inputbox "Введите доменное имя/ip-адрес:" 8 40 3>&1 1>&2 2>&3 3>&-)
 	DNS_RECORD=$(dialog  --checklist "Выберитие запись:" 20 60 10 \
 	"А" "A" off \
 	"АААA" "AAA" off \
@@ -74,9 +75,12 @@ case $OPTION in
 	"CAA" "CAA" off \
 	"SRV" "SRV" off 3>&1 1>&2 2>&3)
 	
-	echo "$DNS_RECORD"
-	
-	#dialog --title   --msgbox  40 70
+	DNS_INP=$(for VAR in $DNS_RECORD
+	do
+		dig +short -t$VAR $USER_DNS
+	done)
+
+	dialog --title "$USER_DNS"  --msgbox "$DNS_INP" 40 70
 	;;
 
 	4)
